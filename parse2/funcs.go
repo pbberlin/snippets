@@ -15,3 +15,10 @@ func printAttr(attributes []html.Attribute, keys []string) {
 		}
 	}
 }
+
+func printLvl(n *html.Node, col int) {
+	if n.Type == html.ElementNode {
+		fmt.Printf("%2v: %2v ", col, n.Data)
+	}
+
+}
