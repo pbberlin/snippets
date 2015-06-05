@@ -9,7 +9,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-var f func(*html.Node, int)
+var TraverseVert func(*html.Node, int)
 var stack util.Stack
 
 type Tx struct {
@@ -20,7 +20,7 @@ type Tx struct {
 var queue = util.NewQueue(10)
 
 func init() {
-	f = func(n *html.Node, lvl int) {
+	TraverseVert = func(n *html.Node, lvl int) {
 
 		// Before children
 		switch n.Type {
@@ -29,7 +29,7 @@ func init() {
 			// 	printAttr(n.Attr, []string{"id", "bd"})
 			// }
 			stack.Push(n.Data)
-			fmt.Printf("%2v: %v\n", stack.Len(), stack) // lvl == stack.Len()
+			fmt.Printf("%2v: %s\n", stack.Len(), stack.StringExt(true)) // lvl == stack.Len()
 
 		case html.TextNode:
 			//
@@ -37,7 +37,7 @@ func init() {
 
 		// Children
 		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			f(c, lvl+1)
+			TraverseVert(c, lvl+1)
 		}
 
 		// After children
@@ -65,27 +65,26 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// f(doc, 0)
-	// printLevelwise1()
+	TraverseVert(doc, 0)
 
-	PrintByLevel(Tx{doc, 0})
+	TraverseHori(Tx{doc, 0})
 
 }
 
-// PrintByLevel traverses the tree horizontally.
+// TraverseHori traverses the tree horizontally.
 // It uses a queue. A FiFo structure.
 // Inspired by www.geeksforgeeks.org/level-order-tree-traversal/
-func PrintByLevel(lp interface{}) {
+func TraverseHori(lp interface{}) {
 
 	lvlPrev := 0
 	for lp != nil {
 
-		// print current
 		lpn := lp.(Tx).Nd
 		lvl := lp.(Tx).Lvl
 
-		if lvl != lvlPrev {
-			fmt.Printf("\n%v\t", lvl)
+		// print current
+		if lvl != lvlPrev { // new level => newline
+			fmt.Printf("\n%2v:\t", lvl)
 			lvlPrev = lvl
 		}
 		fmt.Printf("%8s  ", lpn.Data)
@@ -93,9 +92,9 @@ func PrintByLevel(lp interface{}) {
 		// enqueue all children
 		for c := lpn.FirstChild; c != nil; c = c.NextSibling {
 			if c.Type == html.ElementNode {
-				queue.Push(Tx{c, lvl + 1})
+				queue.EnQueue(Tx{c, lvl + 1})
 			}
 		}
-		lp = queue.Pop()
+		lp = queue.DeQueue()
 	}
 }
