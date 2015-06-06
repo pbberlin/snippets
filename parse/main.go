@@ -12,13 +12,13 @@ import (
 
 func main() {
 
-	s := `	<p id='1'>Links:
-				<span id='11'>p1</span>
-				<span id='12'>p2</span>
+	s := `	<p>Links:
+				<span>p1</span>
+				<span>p2</span>
 			</p>
-			<ul id='2'>
-				<li id='3'><a id='31'  href="foo">Linktext1 <span id='311'>inside</span></a>
-				<li id='4'><a id='41'  href="/bar/baz">BarBaz</a>
+			<ul>
+				<li id='332' ><a   href="foo">Linktext1 <span>inside</span></a>
+				<li><a   href="/bar/baz">BarBaz</a>
 			</ul>`
 
 	var doc1, doc2 *html.Node
@@ -41,6 +41,13 @@ func main() {
 	TraverseVert(doc1, 0)
 
 	ioutil.WriteFile("outp.txt", stackOutp, 0)
-	// fmt.Printf("\n\n%v", string(resBytes))
+
+	// to file
+	var b bytes.Buffer
+	err = html.Render(&b, doc1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ioutil.WriteFile("outp.html", b.Bytes(), 0)
 
 }

@@ -16,9 +16,25 @@ func printAttr(attributes []html.Attribute, keys []string) {
 	}
 }
 
+var idCntr = 0
+
+func addIdAttr(attributes []html.Attribute) []html.Attribute {
+	hasId := false
+	for _, a := range attributes {
+		if a.Key == "id" {
+			hasId = true
+			break
+		}
+	}
+	if !hasId {
+		attributes = append(attributes, html.Attribute{"", "id", fmt.Sprintf("d%v", idCntr)})
+		idCntr++
+	}
+	return attributes
+}
+
 func printLvl(n *html.Node, col int) {
 	if n.Type == html.ElementNode {
 		fmt.Printf("%2v: %2v ", col, n.Data)
 	}
-
 }
