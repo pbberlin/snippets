@@ -8,6 +8,8 @@ import (
 
 func main() {
 
+	// mvpkg.go
+
 	// for pkg := range subpackages(ctxt, srcDir, from) {
 	//   :
 	//   :
